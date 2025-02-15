@@ -1,11 +1,51 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from "react";
+import MarketChart from "@/components/MarketChart";
+import { Button } from "@/components/ui/button";
+
+const INTERVALS = ['1m', '5m', '15m', '1h', '4h', '1d'] as const;
+const SYMBOLS = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT'] as const;
 
 const Index = () => {
+  const [interval, setInterval] = useState<typeof INTERVALS[number]>('1m');
+  const [symbol, setSymbol] = useState<typeof SYMBOLS[number]>('BTCUSDT');
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex flex-wrap gap-4">
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Symbol</h3>
+            <div className="flex gap-2">
+              {SYMBOLS.map((s) => (
+                <Button
+                  key={s}
+                  variant={symbol === s ? "default" : "outline"}
+                  onClick={() => setSymbol(s)}
+                >
+                  {s}
+                </Button>
+              ))}
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <h3 className="text-sm font-medium">Interval</h3>
+            <div className="flex gap-2">
+              {INTERVALS.map((i) => (
+                <Button
+                  key={i}
+                  variant={interval === i ? "default" : "outline"}
+                  onClick={() => setInterval(i)}
+                >
+                  {i}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <MarketChart symbol={symbol} interval={interval} />
       </div>
     </div>
   );
