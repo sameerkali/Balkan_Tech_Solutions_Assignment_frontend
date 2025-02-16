@@ -1,0 +1,2 @@
+export const baseURL = 'https://balkan-tech-solutions-assignment-backend.vercel.app/' // its working with this also but only in spot because of server restructions
+// export const baseURL = 'http://localhost:6969/' // working seemless with this please setup locally 

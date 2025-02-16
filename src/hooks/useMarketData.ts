@@ -1,16 +1,19 @@
-
 import { useState, useEffect } from 'react';
+import { Candle, Market, TimeFrame } from '../types/market';
+import { baseURL } from '../BaseUrl';
 
-interface Candle {
-  timestamp: string;
-  open: number;
-  high: number;
-  low: number;
-  close: number;
-  volume: number;
+interface MarketDataHook {
+  data: Candle[];
+  loading: boolean;
+  error: string | null;
 }
 
-export const useMarketData = (symbol: string, interval: string = '1m') => {
+export const useMarketData = (
+  symbol: string,
+  market: Market,
+  timeFrame: TimeFrame,
+  limit: number = 100
+): MarketDataHook => {
   const [data, setData] = useState<Candle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,11 +23,16 @@ export const useMarketData = (symbol: string, interval: string = '1m') => {
       try {
         setLoading(true);
         const response = await fetch(
-          `http://localhost:6969/api/spot?symbol=${symbol}&interval=${interval}`
+          `${baseURL}api/${market}?symbol=${symbol}&interval=${timeFrame}&limit=${limit}`
         );
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch market data');
+        }
+        
         const jsonData = await response.json();
-        console.log("jsonData: ---- ::", jsonData)
         setData(jsonData);
+        setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -33,10 +41,7 @@ export const useMarketData = (symbol: string, interval: string = '1m') => {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 60000); // Refresh every minute
-
-    return () => clearInterval(interval);
-  }, [symbol, interval]);
+  }, [symbol, market, timeFrame, limit]);
 
   return { data, loading, error };
 };
