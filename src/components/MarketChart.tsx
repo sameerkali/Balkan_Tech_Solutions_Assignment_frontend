@@ -3,15 +3,18 @@ import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useTradeStream } from '@/hooks/useTradeStream';
+import { Exchange, MarketType } from '@/types/market';
 
 interface MarketChartProps {
+  exchange: Exchange;
+  market: MarketType;
   symbol: string;
   interval: string;
 }
 
-const MarketChart = ({ symbol, interval }: MarketChartProps) => {
-  const { data, loading, error } = useMarketData(symbol, interval);
-  const { trades, connected } = useTradeStream('spot', symbol);
+const MarketChart = ({ exchange, market, symbol, interval }: MarketChartProps) => {
+  const { data, loading, error } = useMarketData(exchange, market, symbol, interval);
+  const { trades, connected } = useTradeStream(exchange, market, symbol);
 
   const formatData = data.map((item) => ({
     ...item,
@@ -24,7 +27,9 @@ const MarketChart = ({ symbol, interval }: MarketChartProps) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{symbol} Market Data</h2>
+        <h2 className="text-2xl font-bold">
+          {exchange.toUpperCase()} {market.toUpperCase()} - {symbol}
+        </h2>
         <div className={`px-3 py-1 rounded-full text-sm ${connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
           {connected ? 'Connected' : 'Disconnected'}
         </div>
