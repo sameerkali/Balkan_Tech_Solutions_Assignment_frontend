@@ -23,6 +23,7 @@ export const useMarketData = (symbol: string, interval: string = '1m') => {
           `http://localhost:6969/api/spot?symbol=${symbol}&interval=${interval}`
         );
         const jsonData = await response.json();
+        console.log("jsonData: ---- ::", jsonData)
         setData(jsonData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
